@@ -7,3 +7,114 @@ SELECT * FROM ORDER_DETAILS
 SELECT * FROM ORDERS
 
 SELECT
+
+
+
+-- we want to retrive the totla number of items placed
+select count(distinct order_id) as &#39;Total Orders&#39; from orders;
+
+
+
+-- To calculate the total revenue generated from pizza sales.
+-- First let’s join the order_details and pizzas table to see the details BCS PIZZA TABLE HAS PRICE BUT NOT QUANTITY
+select ORDER_DETAILS.pizza_id, ORDER_DETAILS.quantity, PIZZAS.price
+from ORDER_DETAILS
+join PIZZAS on PIZZAS.pizza_id = ORDER_DETAILS.pizza_id;
+
+
+-- to get the total revenue
+select cast(sum(ORDER_DETAILS.quantity * PIZZAS.price) as decimal(10,2)) as TotalRevenue
+from ORDER_DETAILS
+join PIZZAS on PIZZAS.pizza_id = ORDER_DETAILS.pizza_id;
+
+
+
+
+--MOST COMMON PIZZA ORDERED
+SELECT
+    pizzas.size,
+    COUNT(DISTINCT order_id) AS 'No of Orders',
+    SUM(quantity) AS 'Total Quantity Ordered'
+FROM
+    ORDER_DETAILS
+JOIN
+    pizzas ON PIZZAS.pizza_id = ORDER_DETAILS.pizza_id
+GROUP BY
+    pizzas.size
+ORDER BY
+    COUNT(DISTINCT order_id) DESC;
+
+
+
+-- To calculate the top 3 most ordered pizza types based on revenue
+SELECT TOP 3
+    pizza_type.name,
+    SUM(ORDER_DETAILS.quantity * PIZZAS.price) AS 'Revenue from pizza'
+FROM
+    ORDER_DETAILS
+JOIN
+    PIZZAS ON PIZZAS.pizza_id = ORDER_DETAILS.pizza_id
+JOIN
+    pizza_type ON pizza_type.pizza_type_id = PIZZAS.pizza_type_id
+GROUP BY
+    pizza_type.name
+ORDER BY
+    [Revenue from pizza] DESC;
+-- it shows how we re getting our revenue based on pizza type, thse cna be visulized with use of power BI and tableau
+
+
+
+--INVENTORY MANAGEMENT
+-- Determine the distribution of orders by hour of the day.
+
+SELECT 
+    DATEPART(hour, time) AS 'Hour of the day', 
+    COUNT(DISTINCT order_id) AS 'No of Orders'
+FROM 
+    orders
+GROUP BY 
+    DATEPART(hour, time)
+ORDER BY 
+    [No of Orders] DESC;
+
+
+
+
+--HOW MANY OF EAC FLAVOUR DID THEY ORDER 
+SELECT
+    category,
+    COUNT(DISTINCT pizza_type_id) AS [No of PIZZAS]
+FROM
+    pizza_type
+GROUP BY
+    category
+ORDER BY 
+    [No of PIZZAS];
+
+--FOR SUPREME THIS ONE IS THE MOST ORDERED PIZZA
+
+
+--WHAT IS THE AVERAGE NUMBER OF PIZZA ORDERED PER DAY
+--WE DO IT WITH SUBQUERY
+
+--THE CODE IS NOT THERE SO YOU MIGHT HAVE TO ADD IT
+
+
+
+-- To calculate the top 3 most ordered pizza types based on revenue
+SELECT TOP 3 
+    pizza_type.name, 
+    SUM(order_details.quantity * pizzas.price) AS 'Revenue from pizza'
+FROM 
+    order_details 
+JOIN 
+    pizzas ON pizzas.pizza_id = order_details.pizza_id
+JOIN 
+    pizza_type ON pizza_type.pizza_type_id = pizzas.pizza_type_id
+GROUP BY 
+    pizza_type.name
+ORDER BY 
+    [Revenue from pizza] DESC;
+
+
+
